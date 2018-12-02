@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 	"os"
 
 	"github.com/gorilla/mux"
@@ -13,8 +15,10 @@ import (
 )
 
 var (
-	VERSION string = "0.0.1"
-	ctmpl          = template.Must(template.ParseFiles("apkform.html"))
+	VERSION    string = "undef"
+	COMMIT_ID  string = "undef"
+	BUILD_DATE string = "undef"
+	ctmpl             = template.Must(template.ParseFiles("apkform.html"))
 )
 
 type FormData struct {
@@ -87,6 +91,8 @@ func main() {
 	app.Name = "AlcoLatorSrv"
 	app.Usage = "Calculate drink values"
 	app.Copyright = "(c) 2018 Odd Eivind Ebbesen"
+	app.Version = fmt.Sprintf("%s_%s (Compiled: %s)", VERSION, COMMIT_ID, BUILD_DATE)
+	app.Compiled, _ = time.Parse(time.RFC3339, BUILD_DATE)
 
 	app.Authors = []cli.Author{
 		cli.Author{
@@ -94,7 +100,6 @@ func main() {
 			Email: "oddebb@gmail.com",
 		},
 	}
-	app.Version = VERSION
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
