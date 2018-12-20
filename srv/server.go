@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 	"os"
 
@@ -61,7 +62,8 @@ func CalcHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Errorf("Failed to convert dvolml. Input: %q from %q", r.FormValue("dvolml"), r.RemoteAddr)
 	}
-	fd.DrinkPCT, err = strconv.ParseFloat(r.FormValue("dpct"), 64)
+	dpct := strings.Replace(r.FormValue("dpct"), ",", ".", -1) // replace comma with dot in input
+	fd.DrinkPCT, err = strconv.ParseFloat(dpct, 64)
 	if err != nil {
 		log.Errorf("Failed to convert dpct. Input: %q from %q", r.FormValue("dpct"), r.RemoteAddr)
 	}
