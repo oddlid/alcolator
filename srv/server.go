@@ -8,17 +8,24 @@ import (
 	"time"
 	"os"
 
+	"github.com/GeertJohan/go.rice"
 	"github.com/gorilla/mux"
 	"github.com/oddlid/alcolator"
 	"github.com/urfave/cli"
 	log "github.com/Sirupsen/logrus"
 )
 
+const (
+	E_OK int = iota
+	E_TMPL_LOAD
+)
+
 var (
 	VERSION    string = "undef"
 	COMMIT_ID  string = "undef"
 	BUILD_DATE string = "undef"
-	ctmpl             = template.Must(template.ParseFiles("apkform.html"))
+	ctmpl      *template.Template
+	//ctmpl             = template.Must(template.ParseFiles("apkform.html"))
 )
 
 type FormData struct {
@@ -78,11 +85,43 @@ func CalcHandler(w http.ResponseWriter, r *http.Request) {
 	ctmpl.Execute(w, &fd)
 }
 
+// initialize template via go-rice
+func initTmpl() error {
+	log.Debug("Looking for tmpl subfolder...")
+	tBox, err := rice.FindBox("tmpl")
+	if err != nil {
+		return err
+	}
+	log.Debug("Loading template file...")
+	tStr, err := tBox.String("apkform.html")
+	if err != nil {
+		return err
+	}
+	log.Debug("Parsing template...")
+	tmpl, err := template.New("alcform").Parse(tStr)
+	if err != nil {
+		return err
+	}
+
+	log.Debug("Template loaded and parsed successfully!")
+	ctmpl = tmpl
+
+	return nil
+}
+
 func serve(ctx *cli.Context) error {
 	addr := ctx.String("listen")
 
+	// initialize template
+	err := initTmpl()
+	if err != nil {
+		log.Error(err)
+		return cli.NewExitError(err.Error(), E_TMPL_LOAD)
+	}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/", CalcHandler)
+	log.Infof("Server listening on %s", addr)
 	return http.ListenAndServe(addr, r)
 }
 
