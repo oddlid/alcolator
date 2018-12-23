@@ -1,0 +1,17 @@
+.page {
+	display: table;
+	margin: 0 auto;
+}
+.alright {
+	text-align: right;
+}
+.result {
+	margin-top: 1em;
+	padding: 0.5em;
+	border-left: 0.5em solid green;
+	border-bottom: 1px dashed black;
+}
+.result-hdr {
+	font-weight: bold;
+}
+
