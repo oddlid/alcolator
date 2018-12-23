@@ -6,58 +6,60 @@
   <link rel="stylesheet" type="text/css" media="screen" href="/static/alc.css" />
 </head>
 <body>
-  <div class="page">
-    <div class="form">
-      <h1>Calculate alcohol stuff</h1>
-      <form method="get">
+  <div id="content">
+    <div class="page">
+      <div class="form">
+        <h1>Calculate alcohol stuff</h1>
+        <form method="get">
+          <table>
+            <tr>
+              <td><label>Drink name:</label></td>
+              <td><input type="text" name="dname" id="dname" value="{{ .DrinkName }}"></td>
+            </tr>
+            <tr>
+              <td><label>Drink volume (ml):</label></td>
+              <td><input type="text" name="dvolml" id="dvolml" value="{{ .DrinkVolML }}"></td>
+            </tr>
+            <tr>
+              <td><label>Drink percentage:</label></td>
+              <td><input type="text" name="dpct" id="dpct" value="{{ .DrinkPCT }}"></td>
+            </tr>
+            <tr>
+              <td><label>Drink price:</label></td>
+              <td><input type="text" name="dprice" id="dprice" value="{{ .DrinkPrice }}"></td>
+            </tr>
+            <tr>
+              <td colspan="2" class="alright"><input type="submit" name="dsub" id="dsub" value="Calc"></td>
+            </tr>
+          </table>
+        </form>
+      </div> <!-- form -->
+      {{ if .HasData }}
+      <div class="result">
+        <span class="result-hdr">
+          {{ .DrinkVolML }} ml of {{ .DrinkName }} for {{ .DrinkPrice }} at {{ .DrinkPCT }}% amounts to:
+        </span>
         <table>
           <tr>
-            <td><label>Drink name:</label></td>
-            <td><input type="text" name="dname" id="dname" value="{{ .DrinkName }}"></td>
+            <td>Water:</td>
+            <td class="alright">{{ .ResultWaterML }} ml</td>
           </tr>
           <tr>
-            <td><label>Drink volume (ml):</label></td>
-            <td><input type="text" name="dvolml" id="dvolml" value="{{ .DrinkVolML }}"></td>
+            <td>Alcohol:</td>
+            <td class="alright">{{ .ResultAlcML }} ml</td>
           </tr>
           <tr>
-            <td><label>Drink percentage:</label></td>
-            <td><input type="text" name="dpct" id="dpct" value="{{ .DrinkPCT }}"></td>
+            <td>Price per ml drink:</td>
+            <td class="alright">{{ printf "%.2f" .ResultPricePerDrinkML }}</td>
           </tr>
           <tr>
-            <td><label>Drink price:</label></td>
-            <td><input type="text" name="dprice" id="dprice" value="{{ .DrinkPrice }}"></td>
-          </tr>
-          <tr>
-            <td colspan="2" class="alright"><input type="submit" name="dsub" id="dsub" value="Calc"></td>
+            <td>Price per ml alcohol:</td>
+            <td class="alright">{{ printf "%.2f" .ResultPricePerAlcML }}</td>
           </tr>
         </table>
-      </form>
-    </div>
-    {{ if .HasData }}
-    <div class="result">
-      <span class="result-hdr">
-        {{ .DrinkVolML }} ml of {{ .DrinkName }} for {{ .DrinkPrice }} at {{ .DrinkPCT }}% amounts to:
-      </span>
-      <table>
-        <tr>
-          <td>Water:</td>
-          <td class="alright">{{ .ResultWaterML }} ml</td>
-        </tr>
-        <tr>
-          <td>Alcohol:</td>
-          <td class="alright">{{ .ResultAlcML }} ml</td>
-        </tr>
-        <tr>
-          <td>Price per ml drink:</td>
-          <td class="alright">{{ printf "%.2f" .ResultPricePerDrinkML }}</td>
-        </tr>
-        <tr>
-          <td>Price per ml alcohol:</td>
-          <td class="alright">{{ printf "%.2f" .ResultPricePerAlcML }}</td>
-        </tr>
-      </table>
-    </div>
-    {{ end }}
-  </div>
+      </div><!-- result -->
+      {{ end }}
+    </div> <!-- page -->
+  </div> <!-- content -->
 </body>
 </html>

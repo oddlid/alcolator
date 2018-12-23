@@ -12,14 +12,14 @@ import (
 )
 
 var static http.FileSystem = filter.Keep(
-	http.Dir("./static"),
+	http.Dir("static"),
 	func(path string, fi os.FileInfo) bool {
 		return fi.IsDir() || strings.HasSuffix(path, ".css")
 	},
 )
 
 var templates http.FileSystem = filter.Keep(
-	http.Dir("./templates"),
+	http.Dir("templates"),
 	func(path string, fi os.FileInfo) bool {
 		return fi.IsDir() || strings.HasSuffix(path, ".html")
 	},

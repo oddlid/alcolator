@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
-	"os"
 
-	"github.com/GeertJohan/go.rice"
+	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
 	"github.com/oddlid/alcolator"
+	"github.com/oddlid/alcolator/srv/assets"
+	"github.com/shurcooL/httpfs/html/vfstemplate"
 	"github.com/urfave/cli"
-	log "github.com/Sirupsen/logrus"
 )
 
 const (
@@ -26,7 +27,6 @@ var (
 	COMMIT_ID  string = "undef"
 	BUILD_DATE string = "undef"
 	ctmpl      *template.Template
-	//ctmpl             = template.Must(template.ParseFiles("apkform.html"))
 )
 
 type FormData struct {
@@ -87,25 +87,14 @@ func CalcHandler(w http.ResponseWriter, r *http.Request) {
 	ctmpl.Execute(w, &fd)
 }
 
-// initialize template via go-rice
+// initialize template via vfsgen
 func initTmpl() error {
-	log.Debug("Looking for tmpl subfolder...")
-	tBox, err := rice.FindBox("tmpl")
-	if err != nil {
-		return err
-	}
-	log.Debug("Loading template file...")
-	tStr, err := tBox.String("apkform.html")
-	if err != nil {
-		return err
-	}
-	log.Debug("Parsing template...")
-	tmpl, err := template.New("alcform").Parse(tStr)
+	log.Debug("Loading template...")
+	tmpl, err := vfstemplate.ParseFiles(assets.Assets, nil, "/templates/apkform.html")
 	if err != nil {
 		return err
 	}
 
-	log.Debug("Template loaded and parsed successfully!")
 	ctmpl = tmpl
 
 	return nil
@@ -123,6 +112,7 @@ func serve(ctx *cli.Context) error {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", CalcHandler)
+	r.PathPrefix("/").Handler(http.FileServer(assets.Assets)) // needed for css files
 	log.Infof("Server listening on %s", addr)
 	return http.ListenAndServe(addr, r)
 }
