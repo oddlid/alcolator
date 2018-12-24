@@ -28,6 +28,6 @@ COPY --from=builder /go/src/github.com/oddlid/alcolator/srv/${BINARY}.bin ${BINP
 RUN chown alcsrv ${BINPATH}${BINARY} && chmod 555 ${BINPATH}${BINARY}
 EXPOSE 9600
 USER alcsrv
-ENTRYPOINT ["tini", "-g", "--", "${BINARY}"]
+ENTRYPOINT ["tini", "-g", "--", "alcolatorsrv"]
 CMD ["-l", ":9600"]
 
