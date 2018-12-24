@@ -6,6 +6,7 @@ RUN go get -d -u -v github.com/gorilla/mux
 RUN go get -d -u -v github.com/shurcooL/httpfs/filter
 RUN go get -d -u -v github.com/shurcooL/httpfs/html/vfstemplate
 RUN go get -d -u -v github.com/shurcooL/httpfs/union
+RUN go get -d -u -v github.com/shurcooL/vfsgen
 RUN go get -d -u -v github.com/Sirupsen/logrus
 RUN go get -d -u -v github.com/urfave/cli
 
