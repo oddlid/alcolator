@@ -6,7 +6,7 @@ RUN make
 
 
 FROM alpine:latest
-MAINTAINER Odd E. Ebbesen <oddebb@gmail.com>
+LABEL maintainer="Odd E. Ebbesen <oddebb@gmail.com>"
 RUN apk add --no-cache --update tini ca-certificates \
                 && \
                 rm -rf /var/cache/apk/*
