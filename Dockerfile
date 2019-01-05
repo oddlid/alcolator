@@ -15,7 +15,7 @@ MAINTAINER Odd E. Ebbesen <oddebb@gmail.com>
 
 COPY . ${GOPATH}/src/github.com/oddlid/alcolator
 WORKDIR ${GOPATH}/src/github.com/oddlid/alcolator/srv
-RUN go get -d -u -v ./...
+RUN go get -d -v ./...
 RUN make
 
 
