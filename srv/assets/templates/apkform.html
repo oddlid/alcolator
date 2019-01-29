@@ -1,66 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" />
     <title>Alcohol Calculator</title>
-    <link rel="stylesheet" type="text/css" media="screen" href="/static/alc.css" />
   </head>
   <body>
-    <div id="content">
-      <div class="page">
-        <div class="form">
-          <h1>Calculate alcohol stuff</h1>
-          <form method="get">
-            <table>
-              <tr>
-                <td><label>Drink name:</label></td>
-                <td><input type="text" name="dname" id="dname" value="{{ .DrinkName }}"></td>
-              </tr>
-              <tr>
-                <td><label>Drink volume (ml):</label></td>
-                <td><input type="text" name="dvolml" id="dvolml" value="{{ .DrinkVolML }}"></td>
-              </tr>
-              <tr>
-                <td><label>Drink percentage:</label></td>
-                <td><input type="text" name="dpct" id="dpct" value="{{ .DrinkPCT }}"></td>
-              </tr>
-              <tr>
-                <td><label>Drink price:</label></td>
-                <td><input type="text" name="dprice" id="dprice" value="{{ .DrinkPrice }}"></td>
-              </tr>
-              <tr>
-                <td colspan="2" class="alright"><input type="submit" name="dsub" id="dsub" value="Calc"></td>
-              </tr>
-            </table>
-          </form>
-        </div> <!-- form -->
-        {{ if .HasData }}
-        <div class="result">
-          <span class="result-hdr">
-            {{ .DrinkVolML }} ml of {{ .DrinkName }} for {{ .DrinkPrice }} at {{ .DrinkPCT }}% amounts to:
-          </span>
-          <table>
-            <tr>
-              <td>Water:</td>
-              <td class="alright">{{ .ResultWaterML }} ml</td>
-            </tr>
-            <tr>
-              <td>Alcohol:</td>
-              <td class="alright">{{ .ResultAlcML }} ml</td>
-            </tr>
-            <tr>
-              <td>Price per ml drink:</td>
-              <td class="alright">{{ printf "%.2f" .ResultPricePerDrinkML }}</td>
-            </tr>
-            <tr>
-              <td>Price per ml alcohol:</td>
-              <td class="alright">{{ printf "%.2f" .ResultPricePerAlcML }}</td>
-            </tr>
-          </table>
-        </div><!-- result -->
-        {{ end }}
-      </div> <!-- page -->
-    </div> <!-- content -->
+    <div class="container border">
+      <div class="d-flex flex-row">
+        <h1 class="h3 p-2">Calculate alcohol stuff</h1>
+      </div>
+      <form method="get" action="/">
+        <div class="form-group form-row align-items-center">
+          <label for="dname" class="col-sm-4 col-form-label">Drink name:</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" name="dname" id="dname" value="{{ .DrinkName }}" placeholder="Drink name" required />
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <label for="dvolml" class="col-sm-4 col-form-label">Drink volume (ml):</label>
+          <div class="col-sm-8">
+            <input type="number" class="form-control" name="dvolml" id="dvolml" value="{{ .DrinkVolML }}" placeholder="0" required />
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <label for="dpct" class="col-sm-4 col-form-label">Drink percentage:</label>
+          <div class="col-sm-8">
+            <input type="number"class="form-control"  name="dpct" id="dpct" value="{{ .DrinkPCT }}" placeholder="0.0" step="0.01" required />
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <label for="dprice" class="col-sm-4 col-form-label">Drink price:</label>
+          <div class="col-sm-8">
+            <input type="number" class="form-control" name="dprice" id="dprice" value="{{ .DrinkPrice }}" placeholder="0" required />
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <div class="col-auto"><button type="submit" class="btn btn-primary" name="dsub" id="dsub" value="Calc">Calc</button></div>
+          <div class="col-auto"><a href="/" role="button" class="btn btn-secondary">Reset</a></div>
+        </div>
+      </form>
+      {{ if .HasData }}
+      <div class="w-100">&nbsp;</div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th colspan="2">{{ .DrinkVolML }} ml of &quot;{{ .DrinkName }}&quot; for {{ .DrinkPrice }} at {{ .DrinkPCT }}% amounts to:</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Water:</td>
+            <td>{{ .ResultWaterML }} ml</td>
+          </tr>
+          <tr>
+            <td>Alcohol:</td>
+            <td>{{ .ResultAlcML }} ml</td>
+          </tr>
+          <tr>
+            <td>Price per ml drink:</td>
+            <td>{{ printf "%.2f" .ResultPricePerDrinkML }}</td>
+          </tr>
+          <tr>
+            <td>Price per ml alcohol:</td>
+            <td>{{ printf "%.2f" .ResultPricePerAlcML }}</td>
+          </tr>
+        </tbody>
+      </table>
+      {{ end }}
+    </div> <!-- container -->
   </body>
 </html>
 
