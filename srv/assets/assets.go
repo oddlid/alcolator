@@ -11,15 +11,15 @@ import (
 	"github.com/shurcooL/httpfs/union"
 )
 
-var static http.FileSystem = filter.Keep(
-	http.Dir("static"),
-	func(path string, fi os.FileInfo) bool {
-		return fi.IsDir() || strings.HasSuffix(path, ".css")
-	},
-)
+//var static http.FileSystem = filter.Keep(
+//	http.Dir("assets/static"),
+//	func(path string, fi os.FileInfo) bool {
+//		return fi.IsDir() || strings.HasSuffix(path, ".css")
+//	},
+//)
 
 var templates http.FileSystem = filter.Keep(
-	http.Dir("templates"),
+	http.Dir("assets/templates"),
 	func(path string, fi os.FileInfo) bool {
 		return fi.IsDir() || strings.HasSuffix(path, ".html")
 	},
@@ -27,6 +27,6 @@ var templates http.FileSystem = filter.Keep(
 
 var Assets http.FileSystem = union.New(map[string]http.FileSystem{
 	"/templates": templates,
-	"/static":    static,
+	//"/static":    static,
 })
 
