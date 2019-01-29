@@ -19,7 +19,7 @@ import (
 //)
 
 var templates http.FileSystem = filter.Keep(
-	http.Dir("assets/templates"),
+	http.Dir("templates"),
 	func(path string, fi os.FileInfo) bool {
 		return fi.IsDir() || strings.HasSuffix(path, ".html")
 	},
