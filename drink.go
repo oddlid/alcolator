@@ -10,6 +10,8 @@ type Drink struct {
 	Currency string  // For display purposes
 }
 
+type Drinks []Drink
+
 // VolumeAsDL returns the drinks volume in DL (deciliter)
 func (d Drink) VolumeAsDL() float64 {
 	return float64(d.VolumeML) / 100.0
@@ -40,3 +42,9 @@ func (d Drink) PricePerDrinkML() float64 {
 	return d.Price / float64(d.VolumeML)
 }
 
+// ...
+
+// Add adds another drink to the slice
+func (ds *Drinks) Add(d Drink) {
+	*ds = append(*ds, d)
+}
