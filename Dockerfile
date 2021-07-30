@@ -1,4 +1,4 @@
-FROM golang:stretch as builder
+FROM golang:latest as builder
 COPY . ${GOPATH}/src/github.com/oddlid/alcolator
 WORKDIR ${GOPATH}/src/github.com/oddlid/alcolator/srv
 RUN go get -d -v ./...
@@ -19,6 +19,6 @@ COPY --from=builder /go/src/github.com/oddlid/alcolator/srv/${BINARY}.bin ${BINP
 RUN chown alcsrv ${BINPATH}${BINARY} && chmod 555 ${BINPATH}${BINARY}
 EXPOSE 9600
 USER alcsrv
-ENTRYPOINT ["tini", "-g", "--", "alcolatorsrv"]
-CMD ["-l", ":9600"]
-
+#ENTRYPOINT ["tini", "-g", "--", "alcolatorsrv"]
+#CMD ["-l", ":9600"]
+CMD ${BINARY} -l :9600
