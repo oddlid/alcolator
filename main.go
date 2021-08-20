@@ -9,8 +9,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/oddlid/alcolator/srv"
 	"github.com/oddlid/alcolator/srv/assets"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/shurcooL/httpfs/html/vfstemplate"
-	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -31,7 +32,9 @@ func serve(ctx *cli.Context) error {
 	// initialize template
 	tmpl, err := vfstemplate.ParseFiles(assets.Assets, nil, "/templates/apkform.html")
 	if err != nil {
-		log.Error(err)
+		log.Error().
+			Err(err).
+			Send()
 		return cli.NewExitError(err.Error(), E_TMPL_LOAD)
 	}
 
@@ -40,7 +43,9 @@ func serve(ctx *cli.Context) error {
 	r := mux.NewRouter()
 	r.HandleFunc("/", alcSrv.CalcHandler)
 	r.PathPrefix("/").Handler(http.FileServer(assets.Assets)) // needed for css files
-	log.Infof("Server listening on %s", addr)
+	log.Info().
+		Str("listen_address", addr).
+		Msg("Server listening")
 	return http.ListenAndServe(addr, r)
 }
 
@@ -77,11 +82,12 @@ func main() {
 	}
 
 	app.Flags = []cli.Flag{
-		&cli.StringFlag{
-			Name:  "log-level",
-			Value: "info",
-			Usage: "Log `level` (options: debug, info, warn, error, fatal, panic)",
-		},
+		// Implement this later
+		//&cli.StringFlag{
+		//	Name:  "log-level",
+		//	Value: "info",
+		//	Usage: "Log `level` (options: debug, info, warn, error, fatal, panic)",
+		//},
 		&cli.BoolFlag{
 			Name:    "debug",
 			Aliases: []string{"d"},
@@ -91,25 +97,31 @@ func main() {
 	}
 
 	app.Before = func(c *cli.Context) error {
-		log.SetOutput(os.Stderr)
-		level, err := log.ParseLevel(c.String("log-level"))
-		if err != nil {
-			log.Fatal(err.Error())
+		//log.SetOutput(os.Stderr)
+		//level, err := log.ParseLevel(c.String("log-level"))
+		//if err != nil {
+		//	log.Fatal(err.Error())
+		//}
+		//log.SetLevel(level)
+		//if !c.IsSet("log-level") && !c.IsSet("l") && c.Bool("debug") {
+		//	log.SetLevel(log.DebugLevel)
+		//}
+		//log.SetFormatter(&log.TextFormatter{
+		//	DisableTimestamp: false,
+		//	FullTimestamp:    true,
+		//})
+		if c.Bool("debug") {
+			zerolog.SetGlobalLevel(zerolog.DebugLevel)
 		}
-		log.SetLevel(level)
-		if !c.IsSet("log-level") && !c.IsSet("l") && c.Bool("debug") {
-			log.SetLevel(log.DebugLevel)
-		}
-		log.SetFormatter(&log.TextFormatter{
-			DisableTimestamp: false,
-			FullTimestamp:    true,
-		})
+		zerolog.TimeFieldFormat = "2006-01-02T15:04:05.999-07:00"
 		return nil
 	}
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Error(err)
+		log.Error().
+			Err(err).
+			Send()
 	}
 
 	os.Exit(E_OK)
