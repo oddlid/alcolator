@@ -1,4 +1,4 @@
-package alcolator
+package drink
 
 import (
 	"sort"

@@ -1,0 +1,3 @@
+2021-08-20 14:44:45
+- Replace logrus with zerolog
+- Add signal handling for clean shutdown

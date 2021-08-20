@@ -19,7 +19,8 @@ import (
 //)
 
 var templates http.FileSystem = filter.Keep(
-	http.Dir("templates"),
+	// The path here must be in context of the file using this, which is main.go in the repo root
+	http.Dir("srv/assets/templates"),
 	func(path string, fi os.FileInfo) bool {
 		return fi.IsDir() || strings.HasSuffix(path, ".html")
 	},
@@ -29,4 +30,3 @@ var Assets http.FileSystem = union.New(map[string]http.FileSystem{
 	"/templates": templates,
 	//"/static":    static,
 })
-
