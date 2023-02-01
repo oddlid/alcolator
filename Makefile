@@ -1,9 +1,14 @@
 BINARY := alcolator.bin
-VERSION := 2021-08-20
+VERSION := 2023-02-02
 SOURCES := $(wildcard *.go)
 COMMIT_ID := $(shell git describe --tags --always)
-BUILD_TIME := $(shell date +%FT%T%:z)
-LDFLAGS = -ldflags "-X main.VERSION=${VERSION} -X main.BUILD_DATE=${BUILD_TIME} -X main.COMMIT_ID=${COMMIT_ID} -d -s -w"
+BUILD_TIME := $(shell go run tool/rfc3339date.go)
+UNAME := $(shell uname -s)
+LDFLAGS = -ldflags "-X main.version=${VERSION} -X main.buildDate=${BUILD_TIME} -X main.commitID=${COMMIT_ID} -s -w"
+
+ifeq ($(UNAME), Linux)
+	DFLAG := -d
+endif
 
 .DEFAULT_GOAL: $(BINARY)
 

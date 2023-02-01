@@ -16,14 +16,14 @@ import (
 )
 
 const (
-	E_OK int = iota
-	E_TMPL_LOAD
+	exitOK int = iota
+	exitTemplateLoad
 )
 
 var (
-	VERSION    string
-	COMMIT_ID  string
-	BUILD_DATE string
+	version   string
+	commitID  string
+	buildDate string
 )
 
 func serve(ctx *cli.Context) error {
@@ -35,7 +35,7 @@ func serve(ctx *cli.Context) error {
 		log.Error().
 			Err(err).
 			Send()
-		return cli.NewExitError(err.Error(), E_TMPL_LOAD)
+		return cli.NewExitError(err.Error(), exitTemplateLoad)
 	}
 
 	alcSrv := srv.NewServer(tmpl)
@@ -54,8 +54,8 @@ func main() {
 	app.Name = "AlcoLatorSrv"
 	app.Usage = "Calculate drink values"
 	app.Copyright = "(c) 2018 Odd Eivind Ebbesen"
-	app.Version = fmt.Sprintf("%s_%s (Compiled: %s)", VERSION, COMMIT_ID, BUILD_DATE)
-	app.Compiled, _ = time.Parse(time.RFC3339, BUILD_DATE)
+	app.Version = fmt.Sprintf("%s_%s (Compiled: %s)", version, commitID, buildDate)
+	app.Compiled, _ = time.Parse(time.RFC3339, buildDate)
 
 	app.Authors = []*cli.Author{
 		{
@@ -124,5 +124,5 @@ func main() {
 			Send()
 	}
 
-	os.Exit(E_OK)
+	os.Exit(exitOK)
 }
