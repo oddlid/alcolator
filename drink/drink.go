@@ -1,4 +1,4 @@
-package d2
+package drink
 
 type Drink struct {
 	Name       string

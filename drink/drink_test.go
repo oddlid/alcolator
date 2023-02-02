@@ -1,4 +1,4 @@
-package d2
+package drink
 
 import (
 	"testing"
