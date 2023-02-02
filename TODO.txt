@@ -1,2 +1,5 @@
-2021-08-20 14:44:45
-- Add signal handling for clean shutdown - do we really need that?
+2023-02-02:
+	- Update/move Makefile, create one for each runnable target
+	- Implement cmd for CLI usage
+	- Implement srv for server usage, include in cmd
+	- Use go:embed for resources
