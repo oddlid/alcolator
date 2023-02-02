@@ -1,18 +1,25 @@
 package main
 
 import (
-	"os"
+	"fmt"
 	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/urfave/cli/v2"
 )
 
+const (
+	envLogLevel   = `LOG_LEVEL`
+	cmdAlcAmount  = `alcoholamount`
+	optUnit       = `unit`
+	optPercentage = `percentage`
+	optVolume     = `volume`
+)
+
 var (
 	version  string // to be set by the linker
 	compiled string // to be set by the linker
 	commitID string // to be set by the linker
-	zlog     = zerolog.New(os.Stdout)
 )
 
 func getCompileTime() time.Time {
@@ -23,8 +30,8 @@ func getCompileTime() time.Time {
 	return ts
 }
 
-func newApp() cli.App {
-	return cli.App{
+func newApp() *cli.App {
+	return &cli.App{
 		Version:   version,
 		Compiled:  getCompileTime(),
 		Name:      "Alcolator",
@@ -35,9 +42,38 @@ func newApp() cli.App {
 				Email: "oddebb@gmail.com",
 			},
 		},
-		Usage: "Calculate drink relations",
-		// Before:   nil,
-		Flags:    []cli.Flag{},
-		Commands: []*cli.Command{},
+		Usage:  "Calculate drink relations",
+		Before: logSetup,
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    optLogLevel,
+				Aliases: []string{"l"},
+				Value:   zerolog.InfoLevel.String(),
+				Usage:   fmt.Sprintf("Log `level` (options: %s)", getLevels()),
+				EnvVars: []string{envLogLevel},
+			},
+		},
+		Commands: []*cli.Command{
+			{
+				Name:   cmdAlcAmount,
+				Usage:  "Get the amount of alcohol in a drink",
+				Action: getAlcoholAmount,
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:  optUnit,
+						Usage: "Measurement unit",
+						Value: "ml",
+					},
+					&cli.Float64Flag{
+						Name:  optPercentage,
+						Usage: "Alcohol percentage of drink",
+					},
+					&cli.Float64Flag{
+						Name:  optVolume,
+						Usage: "Volume of drink",
+					},
+				},
+			},
+		},
 	}
 }

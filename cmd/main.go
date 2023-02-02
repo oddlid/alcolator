@@ -8,6 +8,10 @@ import (
 	"syscall"
 )
 
+func pointerTo[T any](v T) *T {
+	return &v
+}
+
 func main() {
 	// The mother of all contexts. Should be passed on to all levels in the app, and other contexts should be derived from this one.
 	// SIGINT is for ctrl-c in a terminal
@@ -19,7 +23,7 @@ func main() {
 
 	if err := app.RunContext(ctx, os.Args); err != nil {
 		if !errors.Is(err, context.Canceled) {
-			zlog.Fatal().Err(err).Send()
+			pointerTo(appLogger(app)).Fatal().Err(err).Send()
 		}
 	}
 }

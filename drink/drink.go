@@ -43,6 +43,13 @@ func (d *Drink) WaterAmount(volume float64) float64 {
 	return volume - d.AlcoholAmount(volume)
 }
 
+func (dc *DrinkContainer) AlcoholAmount() float64 {
+	if dc == nil {
+		return 0.0
+	}
+	return dc.Drink.AlcoholAmount(dc.Volume)
+}
+
 func (dc *DrinkContainer) AlcoholPrice() float64 {
 	if dc == nil {
 		return 0.0
