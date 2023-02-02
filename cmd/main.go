@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,6 +18,8 @@ func main() {
 	app := newApp()
 
 	if err := app.RunContext(ctx, os.Args); err != nil {
-		zlog.Panic().Err(err).Send()
+		if !errors.Is(err, context.Canceled) {
+			zlog.Fatal().Err(err).Send()
+		}
 	}
 }
