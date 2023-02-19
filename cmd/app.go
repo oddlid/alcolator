@@ -9,11 +9,14 @@ import (
 )
 
 const (
-	envLogLevel   = `LOG_LEVEL`
-	cmdAlcAmount  = `alcoholamount`
-	optUnit       = `unit`
-	optPercentage = `percentage`
-	optVolume     = `volume`
+	envLogLevel        = `LOG_LEVEL`
+	cmdAlcAmount       = `alcoholamount`
+	cmdCompare         = `compare`
+	optVolumeUnit      = `volume-unit`
+	optPriceUnit       = `price-unit`
+	optPercentage      = `percentage`
+	optOtherPercentage = `other-percentage`
+	optVolume          = `volume`
 )
 
 var (
@@ -52,25 +55,58 @@ func newApp() *cli.App {
 				Usage:   fmt.Sprintf("Log `level` (options: %s)", getLevels()),
 				EnvVars: []string{envLogLevel},
 			},
+			&cli.StringFlag{
+				Name:    optVolumeUnit,
+				Usage:   "Volume unit",
+				Value:   "ml",
+				Aliases: []string{"V"},
+			},
+			&cli.StringFlag{
+				Name:    optPriceUnit,
+				Usage:   "Price unit",
+				Value:   "SEK",
+				Aliases: []string{"P"},
+			},
 		},
 		Commands: []*cli.Command{
 			{
-				Name:   cmdAlcAmount,
-				Usage:  "Get the amount of alcohol in a drink",
-				Action: getAlcoholAmount,
+				Name:    cmdAlcAmount,
+				Aliases: []string{"a", "amount"},
+				Usage:   "Get the amount of alcohol in a drink",
+				Action:  getAlcoholAmount,
 				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:  optUnit,
-						Usage: "Measurement unit",
-						Value: "ml",
+					&cli.Float64Flag{
+						Name:    optPercentage,
+						Usage:   "Alcohol percentage of drink",
+						Aliases: []string{"p"},
 					},
 					&cli.Float64Flag{
-						Name:  optPercentage,
-						Usage: "Alcohol percentage of drink",
+						Name:    optVolume,
+						Usage:   "Volume of drink",
+						Aliases: []string{"v"},
+					},
+				},
+			},
+			{
+				Name:    cmdCompare,
+				Aliases: []string{"c"},
+				Usage:   "Calculate how much it takes of a drink of given strength to match another of different strength",
+				Action:  compare,
+				Flags: []cli.Flag{
+					&cli.Float64Flag{
+						Name:    optPercentage,
+						Usage:   "Alcohol percentage of drink",
+						Aliases: []string{"p"},
 					},
 					&cli.Float64Flag{
-						Name:  optVolume,
-						Usage: "Volume of drink",
+						Name:    optVolume,
+						Usage:   "Volume of drink",
+						Aliases: []string{"v"},
+					},
+					&cli.Float64Flag{
+						Name:    optOtherPercentage,
+						Usage:   "Alcohol percentage of other drink",
+						Aliases: []string{"o"},
 					},
 				},
 			},
