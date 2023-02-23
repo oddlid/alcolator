@@ -60,6 +60,12 @@ func printComparison(w io.Writer, firstDrink, otherDrink *drink.DrinkContainer) 
 	if firstDrink.Price == 0 || otherDrink.Price == 0 {
 		return
 	}
+
+	// TODO: print price if set
+	fmt.Fprintf(
+		w,
+		"",
+	)
 }
 
 func compare(cCtx *cli.Context) error {
