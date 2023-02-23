@@ -77,18 +77,13 @@ func (dc *DrinkContainer) adjustPriceFromVolume(newVolume float64) {
 	if dc == nil {
 		return
 	}
-	// if current volume and price is not set, we can't calculate
-	if dc.Volume == 0.0 || dc.Price == 0.0 {
-		return
-	}
-	// if we have nothing of this, it can't cost anything
 	if newVolume == 0.0 {
 		dc.Price = 0.0
-		dc.Volume = 0.0
 		return
 	}
-	dc.Price = (dc.Price / dc.Volume) * newVolume
-	dc.Volume = newVolume
+	if dc.Price != 0 {
+		dc.Price = (dc.Price / dc.Volume) * newVolume
+	}
 }
 
 func (dc *DrinkContainer) CompareTo(other *DrinkContainer) DrinkContainer {
@@ -96,8 +91,10 @@ func (dc *DrinkContainer) CompareTo(other *DrinkContainer) DrinkContainer {
 		return DrinkContainer{}
 	}
 
+	adjustedVolume := dc.VolumeForPercentage(other.Drink.Percentage)
 	otherClone := *other
-	otherClone.adjustPriceFromVolume(dc.VolumeForPercentage(other.Drink.Percentage))
+	otherClone.adjustPriceFromVolume(adjustedVolume)
+	otherClone.Volume = adjustedVolume
 
 	return otherClone
 }

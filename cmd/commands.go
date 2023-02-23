@@ -16,7 +16,7 @@ func printAlcoholAmount(w io.Writer, dc *drink.DrinkContainer) {
 	}
 	fmt.Fprintf(
 		w,
-		"%.2f %s of %.2f%% has %.2f %s of alcohol\n",
+		"( %.2f %s / 100.0 ) * %.2f %% = %.2f %s\n",
 		dc.Volume,
 		dc.VolumeUnit,
 		dc.Drink.Percentage,
@@ -40,45 +40,48 @@ func getAlcoholAmount(cCtx *cli.Context) error {
 	return nil
 }
 
-func printComparison(w io.Writer, dc *drink.DrinkContainer, other *drink.DrinkContainer) {
-	if dc == nil || other == nil {
+func printComparison(w io.Writer, firstDrink, otherDrink *drink.DrinkContainer) {
+	if firstDrink == nil || otherDrink == nil {
 		return
 	}
-	c := dc.CompareTo(other)
-	// TODO: calculation is wrong, fix
+	c := firstDrink.CompareTo(otherDrink)
 	fmt.Fprintf(
 		w,
-		"It takes %.2f %s of %.2f%% to match the alcohol amount (%.2f %s) of %.2f %s of %.2f%%\n",
+		"( %.2f %% / %.2f %% ) * %.2f %s = %.2f %s [ = %.2f %s alcohol ]\n",
+		firstDrink.Drink.Percentage,
+		otherDrink.Drink.Percentage,
+		firstDrink.Volume,
+		firstDrink.VolumeUnit,
 		c.Volume,
 		c.VolumeUnit,
-		c.Drink.Percentage,
-		dc.AlcoholAmount(),
-		dc.VolumeUnit,
-		dc.Volume,
-		dc.VolumeUnit,
-		dc.Drink.Percentage,
+		c.AlcoholAmount(),
+		c.VolumeUnit,
 	)
+	if firstDrink.Price == 0 || otherDrink.Price == 0 {
+		return
+	}
 }
 
 func compare(cCtx *cli.Context) error {
-	unit := cCtx.String(optVolumeUnit)
-	volume := cCtx.Float64(optVolume)
-	percentage := cCtx.Float64(optPercentage)
-	percentageOther := cCtx.Float64(optOtherPercentage)
-	dc := drink.DrinkContainer{
-		VolumeUnit: unit,
-		Volume:     volume,
+	volumeUnit := cCtx.String(optVolumeUnit)
+	priceUnit := cCtx.String(optPriceUnit)
+	firstDrink := drink.DrinkContainer{
+		VolumeUnit: volumeUnit,
+		PriceUnit:  priceUnit,
+		Volume:     cCtx.Float64(optVolume),
+		Price:      cCtx.Float64(optPrice),
 		Drink: drink.Drink{
-			Percentage: percentage,
+			Percentage: cCtx.Float64(optPercentage),
 		},
 	}
-	other := drink.DrinkContainer{
-		VolumeUnit: unit,
-		Volume:     volume,
+	otherDrink := drink.DrinkContainer{
+		VolumeUnit: volumeUnit,
+		PriceUnit:  priceUnit,
+		Price:      cCtx.Float64(optOtherPrice),
 		Drink: drink.Drink{
-			Percentage: percentageOther,
+			Percentage: cCtx.Float64(optOtherPercentage),
 		},
 	}
-	printComparison(os.Stdout, &dc, &other)
+	printComparison(os.Stdout, &firstDrink, &otherDrink)
 	return nil
 }

@@ -17,6 +17,8 @@ const (
 	optPercentage      = `percentage`
 	optOtherPercentage = `other-percentage`
 	optVolume          = `volume`
+	optPrice           = `price`
+	optOtherPrice      = `other-price`
 )
 
 var (
@@ -104,9 +106,19 @@ func newApp() *cli.App {
 						Aliases: []string{"v"},
 					},
 					&cli.Float64Flag{
+						Name:    optPrice,
+						Usage:   "Price of drink",
+						Aliases: []string{"P"},
+					},
+					&cli.Float64Flag{
 						Name:    optOtherPercentage,
 						Usage:   "Alcohol percentage of other drink",
 						Aliases: []string{"o"},
+					},
+					&cli.Float64Flag{
+						Name:    optOtherPrice,
+						Usage:   "Price of other drink",
+						Aliases: []string{"O"},
 					},
 				},
 			},
