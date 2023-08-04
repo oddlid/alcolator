@@ -76,13 +76,6 @@ func (d Drink) PricePerDrinkML() float64 {
 	return d.Price / float64(d.VolumeML)
 }
 
-// ...
-
-// Add adds another drink to the slice
-func (ds *Drinks) Add(d Drink) {
-	*ds = append(*ds, d)
-}
-
 func (ds *Drinks) Load(r io.Reader) error {
 	jb, err := io.ReadAll(r)
 	if err != nil {

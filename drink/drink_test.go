@@ -5,6 +5,7 @@ import (
 )
 
 func TestVolumeAsDL(t *testing.T) {
+	t.Parallel()
 	d := Drink{
 		Name:     "Vodka",
 		VolumeML: 750,
@@ -20,6 +21,7 @@ func TestVolumeAsDL(t *testing.T) {
 }
 
 func TestVolumeAsL(t *testing.T) {
+	t.Parallel()
 	d := Drink{
 		Name:     "Vodka",
 		VolumeML: 750,
@@ -35,6 +37,7 @@ func TestVolumeAsL(t *testing.T) {
 }
 
 func TestAlcML(t *testing.T) {
+	t.Parallel()
 	d := Drink{
 		Name:     "Pure Alc",
 		VolumeML: 1000,
@@ -50,6 +53,7 @@ func TestAlcML(t *testing.T) {
 }
 
 func TestWaterML(t *testing.T) {
+	t.Parallel()
 	d := Drink{
 		Name:     "Beer",
 		VolumeML: 500,
@@ -65,6 +69,7 @@ func TestWaterML(t *testing.T) {
 }
 
 func TestPricePerAlcML(t *testing.T) {
+	t.Parallel()
 	d := Drink{
 		Name:     "Pure Alc",
 		VolumeML: 1000,
