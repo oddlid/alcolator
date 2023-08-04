@@ -1,29 +1,33 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/oddlid/alcolator/srv"
-	"github.com/oddlid/alcolator/srv/assets"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/shurcooL/httpfs/html/vfstemplate"
 	"github.com/urfave/cli/v2"
+
+	"github.com/oddlid/alcolator/srv"
+	"github.com/oddlid/alcolator/srv/assets"
 )
 
 const (
-	E_OK int = iota
-	E_TMPL_LOAD
+	eOK int = iota
+	eTmplLoad
 )
 
 var (
-	VERSION    string
-	COMMIT_ID  string
-	BUILD_DATE string
+	Version   string
+	CommitID  string
+	BuildDate string
 )
 
 func serve(ctx *cli.Context) error {
@@ -35,7 +39,7 @@ func serve(ctx *cli.Context) error {
 		log.Error().
 			Err(err).
 			Send()
-		return cli.NewExitError(err.Error(), E_TMPL_LOAD)
+		return cli.Exit(err.Error(), eTmplLoad)
 	}
 
 	alcSrv := srv.NewServer(tmpl)
@@ -49,80 +53,68 @@ func serve(ctx *cli.Context) error {
 	return http.ListenAndServe(addr, r)
 }
 
-func main() {
-	app := cli.NewApp()
-	app.Name = "AlcoLatorSrv"
-	app.Usage = "Calculate drink values"
-	app.Copyright = "(c) 2018 Odd Eivind Ebbesen"
-	app.Version = fmt.Sprintf("%s_%s (Compiled: %s)", VERSION, COMMIT_ID, BUILD_DATE)
-	app.Compiled, _ = time.Parse(time.RFC3339, BUILD_DATE)
-
-	app.Authors = []*cli.Author{
-		{
-			Name:  "Odd E. Ebbesen",
-			Email: "oddebb@gmail.com",
+func newApp() *cli.App {
+	compiled, _ := time.Parse(time.RFC3339, BuildDate)
+	return &cli.App{
+		Name:      "AlcoLatorSrv",
+		Usage:     "Calculate drink values",
+		Copyright: "(c) 2018 Odd Eivind Ebbesen",
+		Version:   fmt.Sprintf("%s_%s (Compiled: %s)", Version, CommitID, BuildDate),
+		Compiled:  compiled,
+		Authors: []*cli.Author{
+			{
+				Name:  "Odd E. Ebbesen",
+				Email: "oddebb@gmail.com",
+			},
 		},
-	}
-
-	app.Commands = []*cli.Command{
-		{
-			Name:    "serve",
-			Aliases: []string{"srv"},
-			Usage:   "Start server",
-			Action:  serve,
-			Flags: []cli.Flag{
-				&cli.StringFlag{
-					Name:    "listen",
-					Aliases: []string{"l"},
-					Usage:   "`ADDR` to listen on",
-					Value:   ":9600",
+		Commands: []*cli.Command{
+			{
+				Name:    "serve",
+				Aliases: []string{"srv"},
+				Usage:   "Start server",
+				Action:  serve,
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "listen",
+						Aliases: []string{"l"},
+						Usage:   "`ADDR` to listen on",
+						Value:   ":9600",
+					},
 				},
 			},
 		},
-	}
-
-	app.Flags = []cli.Flag{
-		// Implement this later
-		//&cli.StringFlag{
-		//	Name:  "log-level",
-		//	Value: "info",
-		//	Usage: "Log `level` (options: debug, info, warn, error, fatal, panic)",
-		//},
-		&cli.BoolFlag{
-			Name:    "debug",
-			Aliases: []string{"d"},
-			Usage:   "Run in debug mode",
-			EnvVars: []string{"DEBUG"},
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:    "debug",
+				Aliases: []string{"d"},
+				Usage:   "Run in debug mode",
+				EnvVars: []string{"DEBUG"},
+			},
+		},
+		Before: func(c *cli.Context) error {
+			if c.Bool("debug") {
+				zerolog.SetGlobalLevel(zerolog.DebugLevel)
+			}
+			zerolog.TimeFieldFormat = "2006-01-02T15:04:05.999-07:00"
+			return nil
 		},
 	}
+}
 
-	app.Before = func(c *cli.Context) error {
-		//log.SetOutput(os.Stderr)
-		//level, err := log.ParseLevel(c.String("log-level"))
-		//if err != nil {
-		//	log.Fatal(err.Error())
-		//}
-		//log.SetLevel(level)
-		//if !c.IsSet("log-level") && !c.IsSet("l") && c.Bool("debug") {
-		//	log.SetLevel(log.DebugLevel)
-		//}
-		//log.SetFormatter(&log.TextFormatter{
-		//	DisableTimestamp: false,
-		//	FullTimestamp:    true,
-		//})
-		if c.Bool("debug") {
-			zerolog.SetGlobalLevel(zerolog.DebugLevel)
-		}
-		zerolog.TimeFieldFormat = "2006-01-02T15:04:05.999-07:00"
-		return nil
-	}
+func main() {
+	ctx, cancel := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+		syscall.SIGTERM,
+		syscall.SIGQUIT,
+	)
+	defer cancel()
 
-	err := app.Run(os.Args)
-	if err != nil {
+	if err := newApp().RunContext(ctx, os.Args); err != nil {
 		log.Error().
 			Err(err).
 			Send()
 	}
 
-	os.Exit(E_OK)
+	os.Exit(eOK)
 }

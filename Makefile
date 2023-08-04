@@ -3,7 +3,7 @@ VERSION := 2021-08-20
 SOURCES := $(wildcard *.go)
 COMMIT_ID := $(shell git describe --tags --always)
 BUILD_TIME := $(shell date +%FT%T%:z)
-LDFLAGS = -ldflags "-X main.VERSION=${VERSION} -X main.BUILD_DATE=${BUILD_TIME} -X main.COMMIT_ID=${COMMIT_ID} -d -s -w"
+LDFLAGS = -ldflags "-X main.Version=${VERSION} -X main.BuildDate=${BUILD_TIME} -X main.CommitID=${COMMIT_ID} -d -s -w"
 
 .DEFAULT_GOAL: $(BINARY)
 
