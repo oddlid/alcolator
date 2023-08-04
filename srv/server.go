@@ -34,7 +34,9 @@ func (as *AlcolatorServer) CalcHandler(w http.ResponseWriter, r *http.Request) {
 	hasData := r.FormValue("dsub") != ""
 
 	if !hasData {
-		as.htmlTemplate.Execute(w, nil)
+		if err := as.htmlTemplate.Execute(w, nil); err != nil {
+			log.Error().Err(err).Send()
+		}
 		return
 	}
 
@@ -55,7 +57,7 @@ func (as *AlcolatorServer) CalcHandler(w http.ResponseWriter, r *http.Request) {
 			Str("dvolml", r.FormValue("dvolml")).
 			Msg("Failed to convert input")
 	}
-	dpct := strings.Replace(r.FormValue("dpct"), ",", ".", -1) // replace comma with dot in input
+	dpct := strings.ReplaceAll(r.FormValue("dpct"), ",", ".") // replace comma with dot in input
 	fd.DrinkPCT, err = strconv.ParseFloat(dpct, 64)
 	if err != nil {
 		log.Error().
@@ -71,7 +73,7 @@ func (as *AlcolatorServer) CalcHandler(w http.ResponseWriter, r *http.Request) {
 			Msg("Failed to convert input")
 	}
 
-	d := &drink.Drink{
+	d := drink.Drink{
 		Name:     fd.DrinkName,
 		VolumeML: fd.DrinkVolML,
 		AlcPCT:   fd.DrinkPCT,
@@ -83,5 +85,7 @@ func (as *AlcolatorServer) CalcHandler(w http.ResponseWriter, r *http.Request) {
 	fd.ResultPricePerAlcML = d.PricePerAlcML()
 	fd.ResultPricePerDrinkML = d.PricePerDrinkML()
 
-	as.htmlTemplate.Execute(w, &fd)
+	if err := as.htmlTemplate.Execute(w, &fd); err != nil {
+		log.Error().Err(err).Send()
+	}
 }

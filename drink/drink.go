@@ -21,7 +21,7 @@ type Drinks []Drink
 // Wrapper for strconv.Atoi
 func atoi(s string) int {
 	val, err := strconv.Atoi(s)
-	if nil != err {
+	if err != nil {
 		return 0
 	}
 	return val
@@ -30,7 +30,7 @@ func atoi(s string) int {
 // Wrapper for strconv.ParseFloat
 func pfloat(s string) float64 {
 	val, err := strconv.ParseFloat(s, 32)
-	if nil != err {
+	if err != nil {
 		return 0.0
 	}
 	return val
@@ -97,8 +97,8 @@ func (ds *Drinks) LoadFile(fileName string) error {
 		return err
 	}
 	defer file.Close()
-	err = ds.Load(file)
-	if err != nil {
+
+	if err = ds.Load(file); err != nil {
 		return err
 	}
 	return nil
@@ -119,8 +119,8 @@ func (ds Drinks) SaveFile(fileName string) error {
 		return err
 	}
 	defer file.Close()
-	_, err = ds.Save(file)
-	if err != nil {
+
+	if _, err = ds.Save(file); err != nil {
 		return err
 	}
 	return nil

@@ -5,7 +5,7 @@ import (
 )
 
 func TestVolumeAsDL(t *testing.T) {
-	d := &Drink{
+	d := Drink{
 		Name:     "Vodka",
 		VolumeML: 750,
 		AlcPCT:   37.5,
@@ -20,7 +20,7 @@ func TestVolumeAsDL(t *testing.T) {
 }
 
 func TestVolumeAsL(t *testing.T) {
-	d := &Drink{
+	d := Drink{
 		Name:     "Vodka",
 		VolumeML: 750,
 		AlcPCT:   37.5,
@@ -35,7 +35,7 @@ func TestVolumeAsL(t *testing.T) {
 }
 
 func TestAlcML(t *testing.T) {
-	d := &Drink{
+	d := Drink{
 		Name:     "Pure Alc",
 		VolumeML: 1000,
 		AlcPCT:   96.0,
@@ -50,7 +50,7 @@ func TestAlcML(t *testing.T) {
 }
 
 func TestWaterML(t *testing.T) {
-	d := &Drink{
+	d := Drink{
 		Name:     "Beer",
 		VolumeML: 500,
 		AlcPCT:   5.0,
@@ -65,7 +65,7 @@ func TestWaterML(t *testing.T) {
 }
 
 func TestPricePerAlcML(t *testing.T) {
-	d := &Drink{
+	d := Drink{
 		Name:     "Pure Alc",
 		VolumeML: 1000,
 		AlcPCT:   96.0,
