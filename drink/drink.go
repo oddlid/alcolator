@@ -3,7 +3,6 @@ package drink
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"os"
 	"strconv"
 )
@@ -85,7 +84,7 @@ func (ds *Drinks) Add(d Drink) {
 }
 
 func (ds *Drinks) Load(r io.Reader) error {
-	jb, err := ioutil.ReadAll(r)
+	jb, err := io.ReadAll(r)
 	if err != nil {
 		return err
 	}
