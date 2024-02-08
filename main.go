@@ -115,6 +115,4 @@ func main() {
 			Err(err).
 			Send()
 	}
-
-	os.Exit(eOK)
 }
