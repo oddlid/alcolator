@@ -1,5 +1,5 @@
 BINARY := alcolator.bin
-VERSION := 2021-08-20
+VERSION := 2024-02-08
 SOURCES := $(wildcard *.go)
 COMMIT_ID := $(shell git describe --tags --always)
 BUILD_TIME := $(shell date +%FT%T%:z)
