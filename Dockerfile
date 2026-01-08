@@ -1,23 +1,10 @@
-ARG BINARY=alcolator
+FROM dhi.io/golang:1-debian13-dev AS builder
+WORKDIR /builld
+COPY . .
+RUN make
 
-FROM golang:latest AS builder
-ARG BINARY
-COPY . ${GOPATH}/src/github.com/oddlid/alcolator/
-WORKDIR ${GOPATH}/src/github.com/oddlid/alcolator/
-RUN make BINARY=${BINARY}
-
-
-FROM alpine:latest
+FROM dhi.io/alpine-base:3.23
 LABEL maintainer="Odd E. Ebbesen <oddebb@gmail.com>"
-ARG BINARY
-ARG BINPATH=/usr/local/bin/
-RUN apk add --no-cache --update ca-certificates \
-    && rm -rf /var/cache/apk/*
-RUN adduser -D -u 1000 alcsrv
-COPY --from=builder /go/src/github.com/oddlid/alcolator/${BINARY} ${BINPATH}${BINARY}
-RUN chown alcsrv ${BINPATH}${BINARY} && chmod 555 ${BINPATH}${BINARY}
+COPY --from=builder --chmod=555 /build/alcolator /usr/local/bin/alcolator
 EXPOSE 9600
-USER alcsrv
-# ARG does not expand in the CMD instruction, so we need to copy the ARG to an ENV var
-ENV ALC_BIN=${BINARY}
-CMD ${ALC_BIN} serve -l :9600
+CMD ["/usr/local/bin/alcolator", "serve", "-l", ":9600"]
