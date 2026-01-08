@@ -1,5 +1,5 @@
 FROM dhi.io/golang:1-debian13-dev AS builder
-WORKDIR /builld
+WORKDIR /build
 COPY . .
 RUN make
 
