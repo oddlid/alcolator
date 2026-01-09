@@ -1,0 +1,6 @@
+.direnv
+.devenv
+.envrc
+flake.*
+*.txt
+build_docker.sh
